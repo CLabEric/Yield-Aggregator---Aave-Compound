@@ -3,6 +3,10 @@
 
 const path = require("path");
 
+const AAVE_POOL = "0x87870Bca3F3fD6335C3F4ce8392D69350B4fA4E2";
+const WETH = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
+const CWETH = "0xA17581A9E3356d9A858b789D68B4d866e593aE94";
+
 async function main() {
   // This is just a convenience check
   if (network.name === "hardhat") {
@@ -22,17 +26,17 @@ async function main() {
 
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
-  const Token = await ethers.getContractFactory("Token");
-  const token = await Token.deploy();
-  await token.deployed();
+  const YieldAggregator = await ethers.getContractFactory("YieldAggregator");
+  const yieldAggregator = await YieldAggregator.deploy(AAVE_POOL, WETH, CWETH);
+  await yieldAggregator.deployed();
 
-  console.log("Token address:", token.address);
+  console.log("YieldAggregator address:", yieldAggregator.address);
 
   // We also save the contract's artifacts and address in the frontend directory
-  saveFrontendFiles(token);
+  saveFrontendFiles(yieldAggregator);
 }
 
-function saveFrontendFiles(token) {
+function saveFrontendFiles(yieldAggregator) {
   const fs = require("fs");
   const contractsDir = path.join(__dirname, "..", "frontend", "src", "contracts");
 
@@ -42,14 +46,14 @@ function saveFrontendFiles(token) {
 
   fs.writeFileSync(
     path.join(contractsDir, "contract-address.json"),
-    JSON.stringify({ Token: token.address }, undefined, 2)
+    JSON.stringify({ YieldAggregator: yieldAggregator.address }, undefined, 2)
   );
 
-  const TokenArtifact = artifacts.readArtifactSync("Token");
+  const YieldAggregatorArtifact = artifacts.readArtifactSync("YieldAggregator");
 
   fs.writeFileSync(
-    path.join(contractsDir, "Token.json"),
-    JSON.stringify(TokenArtifact, null, 2)
+    path.join(contractsDir, "YieldAggregator.json"),
+    JSON.stringify(YieldAggregatorArtifact, null, 2)
   );
 }
 

@@ -1,0 +1,31 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 150px;
+    width: 50%;
+}
+
+.content {
+    border: 5px solid black;
+    display: flex;
+    flex-direction: row;
+    height: 300px;
+    justify-content: space-evenly;
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.input {
+    display: flex;
+    flex-direction: column;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
