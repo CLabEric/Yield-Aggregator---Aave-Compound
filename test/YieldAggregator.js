@@ -62,46 +62,44 @@ describe("Yield Aggregator Tests", function () {
     describe("Contract interaction tasks", async () => {
 
         it("Deposit function should work", async () => {
-            // console.log(await ethers.providers.getNetwork());
             const initialCWethBalance = await this.cWeth.balanceOf(user.address);
 
             await this.weth.connect(user).approve(this.yieldAggregator.address, ONE_HUNDRED_WETH);
             await this.yieldAggregator.connect(user).deposit(ONE_HUNDRED_WETH);
 
-            // const d = await this.yieldAggregator.callStatic.getCompoundAPR();
-            // console.log();
+            const protocol = await this.yieldAggregator.currentProtocol();
 
-            expect(await this.aWeth.balanceOf(user.address)).to.be.equal(ONE_HUNDRED_WETH);
-
-            // expect(await this.cWeth.balanceOf(this.yieldAggregator.address)).to.be.gt(initialCWethBalance);
+            if (protocol === 1) { // aave
+                expect(await this.aWeth.balanceOf(this.yieldAggregator.address)).to.be.equal(ONE_HUNDRED_WETH);
+            } else if (protocol == 2) { // compound
+                expect(await this.cWeth.balanceOf(this.yieldAggregator.address)).to.be.gt(initialCWethBalance);
+            }
+            
             expect(await this.weth.balanceOf(user.address)).to.be.equal(0);
         });
 
         it("Withdraw function should work", async () => {
-            console.log(await this.aWeth.balanceOf(user.address));
-            await this.aWeth.transfer(this.yieldAggregator.address, await this.aWeth.balanceOf(user.address));
-            await this.yieldAggregator.connect(user).withdraw(ONE_HUNDRED_WETH);
+            const protocol = await this.yieldAggregator.currentProtocol();
 
-            // expect(await this.aWeth.balanceOf(user.address)).to.be.lt(ONE_HUNDRED_WETH);
-            // expect(await this.weth.balanceOf(user.address)).to.be.equal(ONE_HUNDRED_WETH);
+            if (protocol === 1) {
+                const aWethBalance = await this.aWeth.balanceOf(this.yieldAggregator.address);
+                
+                await this.yieldAggregator.connect(user).withdraw(aWethBalance.toString());
+                
+                expect(await this.aWeth.balanceOf(user.address)).to.be.lt(ONE_HUNDRED_WETH);
+
+            } else if (protocol == 2) {
+                const cWethBalance = await this.cWeth.balanceOf(this.yieldAggregator.address);
+
+                await this.yieldAggregator.connect(user).withdraw(cWethBalance.toString());
+
+                expect(await this.cWeth.balanceOf(user.address)).to.be.lt(ONE_HUNDRED_WETH);
+            }
+
+            expect(await this.weth.balanceOf(user.address)).to.be.equal(ONE_HUNDRED_WETH);
 
         });
 
     });
 
 });
-
-
-// def get_compound_apy():
-
-//     ctoken_contract = interface.CErc20(cDai)
-
-//     supplyRate = ctoken_contract.supplyRatePerBlock.call()
-
-//     eth_Mantissa =10 ** 18 
-//     blocks_per_Day = 6570
-//     days_in_Year = 365
-
-//     depositAPY = ((((supplyRate / eth_Mantissa * blocks_per_Day + 1) ** days_in_Year)) - 1) * 100
-
-//     print("compound deposit apy is: ", depositAPY)

@@ -2,9 +2,14 @@ import { useState } from 'react';
 import { ethers } from "ethers";
 import "./styles.css";
 
-export const Aggregator = ({userAddress, aggregator, weth, aWeth, cWeth, protocol, initAave, initCompound, wethBalance, deposited }) => {
+export const Aggregator = ({
+    userAddress, aggregator, weth, aWeth, cWeth, protocol, initAave, initCompound, wethBalance, deposited 
+}) => {
     const [amount, setAmount] = useState( '' );
 
+    /** main methods */
+
+    // takes input amount and sends it to our Yield Aggregator's 'deposit()' function
     const deposit = async (e) => {
         e.preventDefault();
 
@@ -14,14 +19,32 @@ export const Aggregator = ({userAddress, aggregator, weth, aWeth, cWeth, protoco
         await aggregator.deposit( formattedAmount, {gasLimit: 500000} );
     };
 
+    // calls our Yield Aggregator's 'rebalance()' function
     const rebalance = async (e) => {
         e.preventDefault();
+
+        await aggregator.rebalance();
     };
 
+    // calls our Yield Aggregator's 'withdraw()' function
     const withdraw = async (e) => {
         e.preventDefault();
+
+        const formattedDeposit = ethers.utils.parseUnits(deposited).toString();
+
+        if (protocol === 1) {
+
+            await aggregator.withdraw(formattedDeposit, {gasLimit: 500000});
+
+        } else if (protocol === 2) {
+
+            await aggregator.withdraw(formattedDeposit, {gasLimit: 500000});
+
+        }
     };
 
+
+    /** helper methods */
     const amountChangeHandler = (e) => {
         setAmount(e.target.value);
     }

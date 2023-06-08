@@ -3,7 +3,7 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface cToken is IERC20 {
+interface cToken {
     function supply(address asset, uint amount) external;
 
     function withdraw(address asset, uint amount) external;
@@ -14,6 +14,16 @@ interface cToken is IERC20 {
 
     function supplyRatePerBlock() external returns (uint);
 
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    function transfer(address dst, uint amount) external returns (bool);
+
+    function transferFrom(
+        address src,
+        address dst,
+        uint amount
+    ) external returns (bool);
+
     // function exchangeRateCurrent() external view returns (uint256);
 
     // function redeem(uint redeemTokens) external returns (uint);
@@ -23,4 +33,19 @@ interface cToken is IERC20 {
     // function underlying() external view returns (address);
 
     // function balanceOfUnderlying(address owner) external view returns (uint);
+
+    function withdrawTo(address to, address asset, uint amount) external;
+
+    function withdrawFrom(
+        address src,
+        address to,
+        address asset,
+        uint amount
+    ) external;
+
+    function approveThis(address manager, address asset, uint amount) external;
+
+    function withdrawReserves(address to, uint amount) external;
+
+    function balanceOf(address owner) external view returns (uint256);
 }

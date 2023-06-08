@@ -11,6 +11,13 @@ import { Loading } from "./Loading";
 
 const HARDHAT_NETWORK_ID = '31337';
 
+/**
+ * Adapted from HH Boilerplate project. We initialize our YieldAggregator
+ * contract then any external contracts. Then set up some initial state,
+ * get some weth if we don't have any.
+ * 
+ * The main logic is in the Aggregator component
+ * **/
 export class Dapp extends React.Component {
   constructor(props) {
     super(props);
@@ -50,8 +57,7 @@ export class Dapp extends React.Component {
       );
     }
 
-    if (false) {
-    // if (!this.state.tokenData || !this.state.balance) {
+    if (!this.state.aggregator) {
       return <Loading />;
     }
 
@@ -95,7 +101,7 @@ export class Dapp extends React.Component {
     });
 
     this._initializeEthers();
-    this._loadContracts();
+    this._loadContracts(userAddress);
     this._getSomeWeth(userAddress);
     this._initializeRest();
   }
@@ -112,7 +118,7 @@ export class Dapp extends React.Component {
     this.setState({aggregator: this._YieldAggregator});
   }
 
-  async _loadContracts() {
+  async _loadContracts(userAddress) {
     const WETH_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
     const AWETH_ADDRESS = "0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8";
     const CWETH_ADDRESS = "0xA17581A9E3356d9A858b789D68B4d866e593aE94";
