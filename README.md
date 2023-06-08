@@ -1,3 +1,5 @@
+Youtube Link for Dapp University: https://youtu.be/yb19BlvytVs
+
 # Hardhat Boilerplate
 
 This repository contains a sample project that you can use as the starting point
